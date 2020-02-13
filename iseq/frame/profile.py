@@ -12,6 +12,8 @@ from nmm import (
     LPROB_ZERO,
     FrameState,
     MuteState,
+    AlphabetTable,
+    lprob_normalize,
 )
 from .result import FrameSearchResult
 from .model import (
@@ -26,14 +28,15 @@ from ..profile import Profile
 
 class FrameStateFactory:
     def __init__(
-        self, base: Base, gcode: GeneticCode, epsilon: float,
+        self, base: Base, prot_abc: Alphabet, gcode: GeneticCode, epsilon: float,
     ):
         self._base = base
+        self._prot_abc = prot_abc
         self._gcode = gcode
         self._epsilon = epsilon
 
-    def create(self, name: bytes, aa_lprobs: Dict[bytes, float]) -> FrameState:
-        codon_lprobs = _infer_codon_lprobs(aa_lprobs, self._gcode)
+    def create(self, name: bytes, prot_abct: AlphabetTable) -> FrameState:
+        codon_lprobs = _infer_codon_lprobs(prot_abct, self._gcode)
         base_lprobs = _infer_base_lprobs(codon_lprobs, self._alphabet)
         base_table = BaseTable.create(self._alphabet, base_lprobs)
         codon_table = CodonTable.create(self._alphabet, codon_lprobs)
@@ -95,18 +98,25 @@ class FrameProfile(Profile):
 
 def create_profile(reader: HMMERProfile, epsilon: float = 0.1) -> FrameProfile:
 
-    breakpoint()
-    alphabet = Alphabet(b"ACGU", b"X")
-    base = Base(alphabet)
-    null_lprobs = _dict(reader.insert(0))
-    ffact = FrameStateFactory(base, GeneticCode(), epsilon)
+    base = Base(Alphabet(b"ACGU", b"X"))
+    prot = Alphabet(reader.alphabet.encode(), b"X")
+
+    prob_list = _create_probability_list(prot.symbols)
+
+    null_lprobs = prob_list(reader.insert(0))
+    ffact = FrameStateFactory(base, prot, GeneticCode(base), epsilon)
 
     nodes_trans: List[Tuple[FrameNode, Transitions]] = []
 
+    breakpoint()
     for m in range(1, reader.M + 1):
-        M = ffact.create(f"M{m}".encode(), _dict(reader.match(m)))
-        I = ffact.create(f"I{m}".encode(), _dict(reader.insert(m)))
-        D = MuteState(f"D{m}".encode(), bases)
+        M = ffact.create(
+            f"M{m}".encode(), AlphabetTable(prot, prob_list(reader.match(m)))
+        )
+        I = ffact.create(
+            f"I{m}".encode(), AlphabetTable(prot, prob_list(reader.insert(m)))
+        )
+        D = MuteState(f"D{m}".encode(), base)
 
         node = FrameNode(M, I, D,)
 
@@ -151,5 +161,13 @@ def _infer_base_lprobs(codon_lprobs, alphabet: Alphabet):
     return {b: logsumexp(lp) for b, lp in lprobs.items()}
 
 
-def _dict(d: Dict[str, Any]):
-    return {k.encode(): v for k, v in d.items()}
+def _create_probability_list(symbols: bytes):
+    def probability_list(lprob_table: Dict[str, Any]):
+        probs = []
+        for i in range(len(symbols)):
+            key = symbols[i : i + 1].decode()
+            probs.append(lprob_table.get(key, LPROB_ZERO))
+
+        return lprob_normalize(probs).tolist()
+
+    return probability_list
