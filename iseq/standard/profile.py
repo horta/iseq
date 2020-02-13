@@ -1,20 +1,18 @@
 from typing import Any, Dict, List, Sequence, Tuple
 
+from nmm import LPROB_ZERO, Alphabet, CSequence, MuteState, NormalState, lprob_normalize
+
 from hmmer_reader import HMMERProfile
 
-from ..._alphabet import Alphabet
-from ..._state import MuteState, NormalState
-from ..._lprob import LPROB_ZERO, lprob_normalize
-from ..._sequence import CSequence
-from .model import Transitions
 from ..profile import Profile
-from .result import StandardSearchResult
 from .model import (
     StandardAltModel,
     StandardNode,
     StandardNullModel,
     StandardSpecialNode,
+    Transitions,
 )
+from .result import StandardSearchResult
 
 
 class StandardProfile(Profile):
@@ -57,7 +55,7 @@ class StandardProfile(Profile):
         return StandardSearchResult(score, seq, path)
 
 
-def create_standard_profile(reader: HMMERProfile) -> StandardProfile:
+def create_profile(reader: HMMERProfile) -> StandardProfile:
 
     alphabet = Alphabet(reader.alphabet.encode(), b"X")
 

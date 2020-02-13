@@ -1,7 +1,7 @@
 from math import log
 
-from .._alphabet import CAlphabet
-from .._lprob import LPROB_ZERO
+from nmm import LPROB_ZERO, CAlphabet
+
 from .model import AltModel, NullModel
 from .result import SearchResult
 

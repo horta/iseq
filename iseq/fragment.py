@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
-
 from typing import Iterator, Tuple
 
-from .._step import CStep
-from .._sequence import SequenceABC
+from nmm import CStep, SequenceABC
 
 
 class Fragment(ABC):

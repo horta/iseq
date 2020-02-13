@@ -1,10 +1,10 @@
 from typing import List, Sequence
 
+from nmm import Interval, SequenceABC
+
 from ..result import SearchResult
 from .fragment import FrameFragment
 from .path import FramePath
-from ..._sequence import SequenceABC
-from ..._interval import Interval
 
 
 class FrameSearchResult(SearchResult):

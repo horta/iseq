@@ -3,14 +3,16 @@ from typing import Any, Dict, List, Sequence, Tuple
 
 from hmmer_reader import HMMERProfile
 
-from ..._alphabet import Alphabet
-from ..._base import Base
-from ..._base_table import BaseTable
-from ..._codon_table import CodonTable
-
-from ..._gencode import GeneticCode
-from ..._lprob import LPROB_ZERO
-from ..._state import FrameState, MuteState
+from nmm import (
+    Alphabet,
+    Base,
+    BaseTable,
+    CodonTable,
+    GeneticCode,
+    LPROB_ZERO,
+    FrameState,
+    MuteState,
+)
 from .result import FrameSearchResult
 from .model import (
     FrameAltModel,
@@ -91,7 +93,7 @@ class FrameProfile(Profile):
         return FrameSearchResult(score, seq, path)
 
 
-def create_frame_profile(reader: HMMERProfile, epsilon: float = 0.1) -> FrameProfile:
+def create_profile(reader: HMMERProfile, epsilon: float = 0.1) -> FrameProfile:
 
     breakpoint()
     alphabet = Alphabet(b"ACGU", b"X")

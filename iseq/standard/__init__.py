@@ -1,3 +1,3 @@
-from .profile import create_standard_profile
+from .profile import create_profile
 
-__all__ = ["create_standard_profile"]
+__all__ = ["create_profile"]

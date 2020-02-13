@@ -2,12 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Sequence, Tuple
 
-from .._hmm import HMM
-from .._lprob import LPROB_ZERO
-from .._path import Path
-from .._results import CResults
-from .._sequence import CSequence
-from .._state import CState, MuteState
+from nmm import HMM, LPROB_ZERO, CResults, CSequence, CState, MuteState, Path
 
 
 @dataclass

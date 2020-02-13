@@ -1,8 +1,6 @@
 from typing import Union
 
-from ..._ffi import ffi, lib
-from ..._state import FrameState, MuteState
-from ..._step import CStep
+from nmm import CStep, FrameState, MuteState, create_imm_step
 
 
 class FrameStep(CStep):
@@ -18,10 +16,7 @@ class FrameStep(CStep):
     """
 
     def __init__(self, state: Union[MuteState, FrameState], seq_len: int):
-        imm_step = lib.imm_step_create(state.imm_state, seq_len)
-        if imm_step == ffi.NULL:
-            raise RuntimeError("Could not create step.")
-        super().__init__(imm_step, state)
+        super().__init__(create_imm_step(state, seq_len), state)
         self._state = state
 
     @property

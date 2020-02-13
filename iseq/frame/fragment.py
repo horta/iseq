@@ -1,6 +1,6 @@
 from typing import Iterator, Tuple
 
-from ..._sequence import SequenceABC
+from nmm import SequenceABC
 from ..fragment import Fragment
 from .path import FramePath
 from .step import FrameStep

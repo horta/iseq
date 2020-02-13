@@ -1,8 +1,7 @@
 from typing import Dict, List, Sequence, Tuple, Union
 
-from ..._ffi import ffi
-from ..._state import MuteState, FrameState
-from ..._sequence import CSequence
+from nmm import CData, CSequence, FrameState, MuteState
+
 from ..model import AltModel, Node, NullModel, SpecialNode, Transitions
 from .path import FramePath
 
@@ -98,7 +97,7 @@ class FrameAltModel(AltModel):
     ):
         self._special_node = special_node
         self._core_nodes = [nt[0] for nt in nodes_trans]
-        self._states: Dict[ffi.CData, Union[MuteState, FrameState]] = {}
+        self._states: Dict[CData, Union[MuteState, FrameState]] = {}
 
         for node in self._core_nodes:
             for state in node.states():
